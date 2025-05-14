@@ -69,7 +69,7 @@ class AddClientPage extends Component {
                 </div>
 
                 <div className="mb-3">
-                    <label>מנהל דיפולטי:</label>
+                    <label>מנהל הלקוח:</label>
                     <Select
                         options={managerOptions}
                         value={managerOptions.find(opt => opt.value === defaultManager) || null}

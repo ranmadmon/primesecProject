@@ -10,7 +10,7 @@ class NavBar extends React.Component {
         const { user } = this.context;
 
         return (
-            <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+            <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm fixed-top">
                 <div className="container-fluid">
                     <img
                         src="https://images.cdn-files-a.com/uploads/909407/400_5e876acdaa8d2.png"
@@ -24,23 +24,37 @@ class NavBar extends React.Component {
 
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav ms-auto">
-                            <li className="nav-item">
-                                <Link className="nav-link" to="/home">בית</Link>
-                            </li>
+
+
 
                             {user && user.role === 'admin' && (
                                 <>
                                     <li className="nav-item">
-                                        <Link className="nav-link" to="/task-assignment">סידור משימות</Link>
-                                    </li>
-                                    <li className="nav-item">
                                         <Link className="nav-link" to="/admin-edit">עריכת פרטים</Link>
                                     </li>
 
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to="/task-assignment">סידור משימות</Link>
+                                    </li>
                                 </>
                             )}
 
+                            {user && user.role === 'teamLeader' && (
+                                <>
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to= "/My-Team-Page" >הצוות שלי </Link>
+                                    </li>
+                                </>
+                            )}
 
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/Personal-Details-Page">פרטים אישיים</Link>
+                            </li>
+
+
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/home">בית</Link>
+                            </li>
                             {/* אופציונלי: קישור ליציאה או לעמוד אחר */}
                             <li className="nav-item">
                                 <Link className="nav-link" to="/">התנתקות</Link>

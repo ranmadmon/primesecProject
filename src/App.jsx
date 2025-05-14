@@ -8,6 +8,8 @@ import TaskAssignmentPage from "./pages/TaskAssignmentPage.jsx"; // הנתיב �
 import AdminEditPage from './pages/AdminEditPage';
 import { AppDataProvider } from './context/AppDataContext';
 import { UserContext } from './context/UserContext.jsx';
+import PersonalDetailsPage from "./pages/PersonalDetailsPage.jsx";
+import MyTeamPage from "./pages/MyTeamPage.jsx";
 
 
 
@@ -24,7 +26,8 @@ function App() {
                         <Route path="/home" element={<HomePage />} />
                         <Route path="/task-assignment" element={<TaskAssignmentPage />} />
                         <Route path="/admin-edit" element={<AdminEditPage />} />
-
+                        <Route path="/Personal-Details-Page" element={<PersonalDetailsPage />} />
+                        <Route path="/My-Team-Page" element={<MyTeamPage />} />
                     </Route>
                 </Routes>
             </BrowserRouter>

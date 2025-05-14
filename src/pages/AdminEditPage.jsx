@@ -4,6 +4,11 @@ import { UserContext } from '../context/UserContext'; // או הנתיב הרל�
 import AddClientPage from "../adminEditPages/AddClientPage.jsx";
 import AddTeamPage from "../adminEditPages/AddTeamPage.jsx";
 import EditWorkersPage from "../adminEditPages/EditWorkersPage.jsx";
+import AbilityEditPage from "../adminEditPages/AbilityEditPage.jsx";
+import TaskCreationPage from "../adminEditPages/TaskCreationPage.jsx";
+import EditClientsPage from "../adminEditPages/EditClientsPage.jsx";
+import EditTasksPage from "../adminEditPages/EditTasksPage.jsx";
+import EditTeamsPage from "../adminEditPages/EditTeamsPage.jsx";
 
 class AdminEditPage extends Component {
     constructor(props) {
@@ -15,7 +20,7 @@ class AdminEditPage extends Component {
                 { value: 'addClient', label: 'הוספת לקוח חדש' },
                 { value: 'createNewTeam', label: 'יצירת צוות חדש' },
                 { value: 'createNewTask', label: 'יצירת משימה חדשה' },
-                { value: 'createAbilities', label: 'יצירת יכולות' },
+                { value: 'createAbilities', label: 'עריכת יכולות' },
                 { value: 'editWorkers', label: 'עריכת עובדים' },
                 { value: 'editClients', label: 'עריכת לקוחות קיימים' },
                 { value: 'editTeams', label: 'עריכת צוותים' },
@@ -37,7 +42,7 @@ class AdminEditPage extends Component {
                 </div>;
             case 'createAbilities':
                 return <div>
-                    פה יוצג עמוד יצירת יכולות
+                    <AbilityEditPage/>
                 </div>;
             case 'createNewTeam':
                 return <div>
@@ -45,18 +50,24 @@ class AdminEditPage extends Component {
                 </div>;
             case 'createNewTask':
                 return <div>
-                    כאן תוצג טבלת יצירת משימות
+                    <TaskCreationPage/>
                 </div>;
             case 'editWorkers':
                 return <div>
                     <EditWorkersPage/>.
                 </div>;
             case 'editClients':
-                return <div>כאן ניתן לערוך את פרטי הלקוחות או למחוק</div>;
+                return <div>
+                    <EditClientsPage/>
+                </div>;
             case 'editTeams':
-                return <div>כאן ניתן לערוך צוותים, להעביר עובדים, לשנות מנהלים</div>;
+                return <div>
+                    <EditTeamsPage/>
+                </div>;
             case 'editTasks':
-                return <div>כאן תוצג עריכת המשימות</div>;
+                return <div>
+                    <EditTasksPage/>
+                </div>;
             default:
                 return <div>בחר פעולה מהתפריט הימני</div>;
         }

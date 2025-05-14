@@ -24,21 +24,57 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  padding-top: 90px; /* במקום 70, תן טיפה יותר מרווח */
   min-width: 320px;
   min-height: 100vh;
 }
+
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
 
+/* ====== כאן התיקון העיקרי ל־Navbar ====== */
+.navbar {
+  position: fixed;    /* תמיד קבוע במסך */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;      /* מעל כל תוכן אחר */
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2c3e50;
+  padding: 10px 20px;
+  height: 75px !important;
+  color: white;
+}
+
+.nav-logo img {
+  height: 40px; /* גובה קבוע לתמונה */
+}
+
+.nav-links a {
+  color: white;
+  margin-left: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: #1abc9c;
+}
+
+/* ====== ריווח התוכן מתחת ל־Navbar ====== */
 #app {
   max-width: 1280px;
   margin: 0 auto;
+  /* padding-top מוגדר כך שהתוכן לא יתכסֶה על־ידי ה־Navbar */
   padding: 2rem;
+  padding-top: calc(2rem + 75px);
   text-align: center;
 }
 
@@ -93,4 +129,5 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+  /* לא נדרש לעדכן כאן שוב את ה־padding-top, כי זה כבר בהגדרת #app הראשית */
 }

@@ -7,7 +7,10 @@ function WithNavLayout() {
     return (
         <div>
             <NavBar />
-            <Outlet />
+            <div style={{ paddingTop: '75px' }}>
+                <Outlet />
+            </div>
+
         </div>
     );
 }
