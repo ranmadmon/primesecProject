@@ -37,7 +37,7 @@ class AdminEditPage extends Component {
                 </div>;
             case 'createAbilities':
                 return <div>
-                    פה יוצג עמוד יצירת יכולות akuo
+                    פה יוצג עמוד יצירת יכולות
                 </div>;
             case 'createNewTeam':
                 return <div>
