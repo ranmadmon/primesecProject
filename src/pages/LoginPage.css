@@ -1,0 +1,18 @@
+/* LoginPage.css */
+
+.login-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* מרכז אופקית */
+    justify-content: center; /* מרכז אנכית */
+    min-height: 100vh; /* גובה מסך מלא */
+    background-color: white; /* רקע בהיר לדוגמה */
+    overflow: hidden;     /* מסיר את הגלילה */
+}
+
+.card {
+    width: 30vw; /* 85% מהרוחב של המסך */
+    height: 75vh; /* 85% מהגובה של המסך */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* להוסיף צל לכרטיס */
+}
