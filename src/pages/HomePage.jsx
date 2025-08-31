@@ -6,7 +6,7 @@ import { Navigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import Select from 'react-select';
 import { SERVER_URL } from '../Utils/Constants.jsx';
-import '../CssFiles/homepage.css';
+import '../CssFiles/Homepage.css';
 import '../CssFiles/filterModal.css';
 import '../CssFiles/taskCard.css';
 

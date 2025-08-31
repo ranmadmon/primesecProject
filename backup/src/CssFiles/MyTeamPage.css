@@ -1,0 +1,98 @@
+/* client/src/CssFiles/MyTeamPage.css */
+
+.edit-team-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+}
+
+.edit-team-container h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+    color: #333;
+}
+
+.edit-team-container p.welcome {
+    text-align: center;
+    margin-bottom: 9rem;
+    font-size: 1.3rem;
+    color: #555;
+}
+
+.team-wrapper {
+    display: flex;
+    gap: 2rem;
+}
+
+.team-list {
+    flex: 1;
+    max-width: 250px;
+    padding: 0;
+    list-style: none;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.team-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    border-bottom: 1px solid #eee;
+}
+
+.team-item:last-child {
+    border-bottom: none;
+}
+
+.team-item:hover {
+    background: #e9f5ff;
+}
+
+.team-item.leader {
+    font-weight: bold;
+    color: #b35d00;
+    background: #fff4e5;
+}
+
+.team-item.selected {
+    background: #cce5ff !important;
+    color: #004085 !important;
+}
+
+.member-details-card {
+    flex: 2;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.member-details-card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.member-details-card p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.member-details-card ul {
+    padding-left: 1.2rem;
+    color: #555;
+}
+
+.member-details-card ul li {
+    margin-bottom: 0.25rem;
+}
+.welcome {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+

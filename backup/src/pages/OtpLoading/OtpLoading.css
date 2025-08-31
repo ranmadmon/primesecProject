@@ -1,0 +1,180 @@
+.loading {
+    position: absolute;
+    backdrop-filter: blur(10px);
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* יישור אנכי */
+    align-items: center;     /* יישור אופקי */
+    z-index: 10; /* לוודא שהטעינה תהיה מעל שאר האלמנטים */
+}
+
+.loader{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+/*while pseudo verification*/
+#before-check-group {
+    animation: 0.5s ease-in-out 2s;
+    transform-origin: center;
+}
+#before-check-group #outline {
+    animation: 2s ease-in-out before-outline;
+    transform: rotate(0deg);
+    transform-origin: center;
+}
+@keyframes before-outline {
+    from {
+        stroke-dasharray: 0, 345.576px;
+    }
+    to {
+        stroke-dasharray: 345.576px, 345.576px;
+    }
+}
+
+/*verified V mark*/
+#check-group #outline {
+    animation: 1s ease-in outline;
+    transform: rotate(0deg);
+    transform-origin: center;
+}
+#check-group #white-circle {
+    animation: 0.35s ease-in 1s forwards circle;
+    transform: none;
+    transform-origin: center;
+}
+#check-group #check {
+    animation: 0.50s cubic-bezier(0.65, 0, 1, 1) 1.4s forwards check;
+    stroke-dasharray: 0, 75px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+#check-group {
+    animation: 0.32s ease-in-out 1.8s check-group;
+    transform-origin: center;
+}
+
+@keyframes outline {
+    from {
+        stroke-dasharray: 0, 345.576px;
+    }
+    to {
+        stroke-dasharray: 345.576px, 345.576px;
+    }
+}
+@keyframes circle {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(0);
+    }
+}
+@keyframes check {
+    from {
+        stroke-dasharray: 0, 75px;
+    }
+    to {
+        stroke-dasharray: 75px, 75px;
+    }
+}
+@keyframes check-group {
+    from {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.09);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+/*verified X mark*/
+#unverified-group {
+    animation: 0.32s ease-in-out 1.5s unverified-group;
+    transform-origin: center;
+}
+
+#unverified-group #unverified {
+    animation: 0.34s cubic-bezier(0.65, 0, 1, 1) 1.4s forwards unverified;
+    stroke-dasharray: 0, 75px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transform: translateY(40px) translateX(40px);
+}
+
+#unverified-group #outline {
+    animation: 1s ease-in outline;
+    transform: rotate(0deg);
+    transform-origin: center;
+}
+
+#unverified-group #white-circle {
+    animation: 0.35s ease-in 1s forwards circle;
+    transform: none;
+    transform-origin: center;
+}
+#path2 {
+    stroke-dasharray: 430;
+    stroke-dashoffset: 800;
+    animation: x 0.6s linear 1s;
+    animation-fill-mode:forwards;
+}
+#path3 {
+    stroke-dasharray: 430;
+    stroke-dashoffset: 800;
+    animation: x 0.6s linear ;
+    animation-fill-mode:forwards;
+    animation-delay:1.3s;
+}
+
+@keyframes x {
+    from {
+        stroke-dasharray: 430;
+    }
+    to {
+        stroke-dasharray: 400;
+    }
+}
+@keyframes outline {
+    from {
+        stroke-dasharray: 0, 345.576px;
+    }
+    to {
+        stroke-dasharray: 345.576px, 345.576px;
+    }
+}
+@keyframes circle {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(0);
+    }
+}
+/*@keyframes unverified {*/
+/*    from {*/
+/*        stroke-dasharray: 0, 75px;*/
+/*    }*/
+/*    to {*/
+/*        stroke-dasharray: 75px, 75px;*/
+/*    }*/
+/*}*/
+@keyframes unverified-group {
+    from {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.09);
+    }
+    to {
+        transform: scale(1);
+    }
+}

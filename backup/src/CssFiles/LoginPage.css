@@ -1,0 +1,73 @@
+/* container that centers everything both ways */
+.login-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;    /* הרם את התוכן למעלה */
+    padding-top: 5rem;               /* רווח קטן מלמעלה */
+    min-height: 100vh;
+    background-color: #f5f7fa;
+}
+
+.login-logo {
+    width: 230px;        /* כווץ את הלוגו */
+    margin-bottom: 2rem; /* קצת רווח מתחת ללוגו */
+}
+
+/* override your Card component’s root element */
+.card {
+    position: relative;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+/* section headers inside the card */
+.login-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    font-size: 2rem;
+}
+
+
+/* link row under the button */
+.login-footer {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+/* you can tweak these to taste: */
+.btn-secondary {
+    background-color: #5a6670;
+    border-color: #5a6670;
+}
+.btn-secondary:disabled {
+    opacity: 0.6;
+}
+/* LoginPage.css (or Form.css) */
+.card .form-control {
+    width: 90%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #2f4f4f;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 1rem;
+}
+
+.card .form-control::placeholder {
+    color: #999;
+}
+
+.card .form-control:focus {
+    border-color: #5a6670;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(90, 102, 112, 0.2);
+}
+

@@ -1,0 +1,55 @@
+/* client/src/CssFiles/filterModal.css */
+
+.filter-modal-backdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000;
+}
+.filter-modal {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    width: 280px;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.filter-modal h4 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    text-align: center;
+}
+.filter-list {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+.filter-list li {
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.filter-list li.active,
+.filter-list li:hover {
+    background: #e0f0ff;
+}
+.close-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    border: none;
+    background: transparent;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.clickable { cursor: pointer; }
+.filter-modal .filter-search {
+    width: 100%;
+    padding: 6px 8px;
+    margin-bottom: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
