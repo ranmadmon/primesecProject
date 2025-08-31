@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { useAppData } from '../context/AppDataContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../cssFiles/page-layout.css'; // כיתת CSS משותפת
+import '../CssFiles/page-layout.css'; // כיתת CSS משותפת
 import { SERVER_URL } from '../Utils/Constants.jsx';
 
 export default function TaskCreationPage() {

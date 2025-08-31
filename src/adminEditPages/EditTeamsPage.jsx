@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
-import '../cssFiles/page-layout.css';
+import '../CssFiles/page-layout.css';
 import { SERVER_URL } from '../Utils/Constants.jsx';
 
 export default function EditTeamsPage() {

@@ -3,7 +3,7 @@ import Cookies from 'universal-cookie';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom';
 import { User, Mail, Phone, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-import '../cssFiles/PersonalDetailsPage.css';
+import '../CssFiles/PersonalDetailsPage.css';
 
 export default function PersonalDetailsPage() {
     const [details, setDetails] = useState(null);

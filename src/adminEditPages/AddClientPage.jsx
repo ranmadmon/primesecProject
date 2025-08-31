@@ -1,7 +1,7 @@
 // src/components/AddClientPage.jsx
 import React, { Component } from 'react';
 import Select from 'react-select';
-import '../cssFiles/page-layout.css';  // מייבא את הסגנונות
+import '../CssFiles/page-layout.css';  // מייבא את הסגנונות
 import { SERVER_URL } from '../Utils/Constants.jsx';
 
 class AddClientPage extends Component {

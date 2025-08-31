@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
-import '../cssFiles/page-layout.css';   // <-- כאן העיצוב המשותף
+import '../CssFiles/page-layout.css';   // <-- כאן העיצוב המשותף
 import { SERVER_URL } from '../Utils/Constants.jsx';
 
 export default function EditClientsPage() {

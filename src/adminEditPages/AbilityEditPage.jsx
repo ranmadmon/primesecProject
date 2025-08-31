@@ -1,7 +1,7 @@
 // src/components/AbilityEditPage.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../cssFiles/page-layout.css';  // מייבאים את הסגנונות
+import '../CssFiles/page-layout.css';  // מייבאים את הסגנונות
 import { SERVER_URL } from '../Utils/Constants.jsx';
 
 export default function AbilityEditPage() {

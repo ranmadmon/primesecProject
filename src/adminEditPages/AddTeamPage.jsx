@@ -1,7 +1,7 @@
 // src/components/AddTeamPage.jsx
 import React, { Component } from 'react';
 import Select from 'react-select';
-import '../cssFiles/page-layout.css';  // מייבא את עיצוב התבנית
+import '../CssFiles/page-layout.css';  // מייבא את עיצוב התבנית
 import { SERVER_URL } from '../Utils/Constants.jsx';
 
 export default class AddTeamPage extends Component {

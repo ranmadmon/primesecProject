@@ -1,7 +1,7 @@
 // src/components/AddWorkerPage.jsx
 import React, { Component } from 'react'
 import Select from 'react-select'
-import '../cssFiles/page-layout.css'    // כאן מייבאים את העיצוב המשותף
+import '../CssFiles/page-layout.css'    // כאן מייבאים את העיצוב המשותף
 import { SERVER_URL } from '../Utils/Constants.jsx'
 
 export default class AddWorkerPage extends Component {

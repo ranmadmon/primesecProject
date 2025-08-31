@@ -3,7 +3,7 @@ import Select from 'react-select';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { SERVER_URL } from '../Utils/Constants.jsx';
-import '../cssFiles/TaskAssignmentPage.css';
+import '../CssFiles/TaskAssignmentPage.css';
 
 const ROLE_LABELS = {
     1: 'עובד רגיל',
