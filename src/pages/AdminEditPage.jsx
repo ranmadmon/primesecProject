@@ -1,6 +1,6 @@
+// src/pages/AdminEditPage.jsx
 import React, { Component } from 'react';
 import AddWorkerPage from "../adminEditPages/AddWorkerPage.jsx";
-import { UserContext } from '../context/UserContext'; // או הנתיב הרלוונטי
 import AddClientPage from "../adminEditPages/AddClientPage.jsx";
 import AddTeamPage from "../adminEditPages/AddTeamPage.jsx";
 import EditWorkersPage from "../adminEditPages/EditWorkersPage.jsx";
@@ -33,41 +33,23 @@ class AdminEditPage extends Component {
         const { selectedOption } = this.state;
         switch (selectedOption?.value) {
             case 'addUser':
-                return <div>
-                    <AddWorkerPage/>
-                </div>;
+                return <AddWorkerPage />;
             case 'addClient':
-                return <div>
-                    <AddClientPage/>
-                </div>;
+                return <AddClientPage />;
             case 'createAbilities':
-                return <div>
-                    <AbilityEditPage/>
-                </div>;
+                return <AbilityEditPage />;
             case 'createNewTeam':
-                return <div>
-                    <AddTeamPage/>
-                </div>;
+                return <AddTeamPage />;
             case 'createNewTask':
-                return <div>
-                    <TaskCreationPage/>
-                </div>;
+                return <TaskCreationPage />;
             case 'editWorkers':
-                return <div>
-                    <EditWorkersPage/>.
-                </div>;
+                return <EditWorkersPage />;
             case 'editClients':
-                return <div>
-                    <EditClientsPage/>
-                </div>;
+                return <EditClientsPage />;
             case 'editTeams':
-                return <div>
-                    <EditTeamsPage/>
-                </div>;
+                return <EditTeamsPage />;
             case 'editTasks':
-                return <div>
-                    <EditTasksPage/>
-                </div>;
+                return <EditTasksPage />;
             default:
                 return <div>בחר פעולה מהתפריט הימני</div>;
         }
@@ -79,29 +61,36 @@ class AdminEditPage extends Component {
         return (
             <div style={{ display: 'flex', direction: 'rtl', height: '100vh' }}>
                 {/* Sidebar */}
-                <div style={{
-                    width: '220px',
-                    background: '#f8f9fa',
-                    borderLeft: '1px solid #ddd',
-                    padding: '1rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.5rem'
-                }}>
+                <div
+                    style={{
+                        position: 'sticky',
+                        top: 0,
+                        alignSelf: 'flex-start',
+                        width: '220px',
+                        background: '#f8f9fa',
+                        borderLeft: '1px solid #ddd',
+                        padding: '1rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.5rem',
+                        height: '100vh',
+                    }}
+                >
                     <h5 style={{ marginBottom: '1rem' }}>ניהול מערכת</h5>
-                    {options.map((option) => (
+                    {options.map(option => (
                         <button
                             key={option.value}
                             className={`btn ${selectedOption?.value === option.value ? 'btn-primary' : 'btn-outline-primary'}`}
                             onClick={() => this.setState({ selectedOption: option })}
+                            style={{ textAlign: 'right' }}
                         >
                             {option.label}
                         </button>
                     ))}
                 </div>
 
-                {/* תוכן */}
-                <div style={{ flex: 1, padding: '2rem' }}>
+                {/* Main Content */}
+                <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
                     {this.renderSelectedSection()}
                 </div>
             </div>

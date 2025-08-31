@@ -1,63 +1,68 @@
+// src/components/AddClientPage.jsx
 import React, { Component } from 'react';
 import Select from 'react-select';
-import { AppDataContext } from '../context/AppDataContext';
+import '../cssFiles/page-layout.css';  // מייבא את הסגנונות
+import { SERVER_URL } from '../Utils/Constants.jsx';
 
 class AddClientPage extends Component {
-    static contextType = AppDataContext;
+    state = {
+        name: '',
+        defaultManager: '',
+        users: [] // מגיע מהשרת
+    };
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: '',
-            defaultManager: ''
-        };
-    }
+    componentDidMount = async () => {
+        try {
+            const response = await fetch(`${SERVER_URL}/all-users`);
+            const data = await response.json();
+            this.setState({ users: data });
+        } catch (err) {
+            console.error("שגיאה בטעינת משתמשים:", err);
+        }
+    };
 
-    handleChange = (e) => {
+    handleChange = e => {
         this.setState({ [e.target.name]: e.target.value });
     };
 
-    handleSelectManager = (selectedOption) => {
+    handleSelectManager = selectedOption => {
         this.setState({ defaultManager: selectedOption?.value || '' });
     };
 
-    handleAddClient = () => {
+    handleAddClient = async () => {
         const { name, defaultManager } = this.state;
-        const { clients, setClients, workers } = this.context;
-
         if (!name || !defaultManager) {
             alert('נא למלא את כל השדות');
             return;
         }
-
-        const nextId = clients.length > 0 ? Math.max(...clients.map(c => c.id)) + 1 : 101;
-
-        const newClient = {
-            id: nextId,
-            name,
-            defaultManager
-        };
-
-        setClients([...clients, newClient]);
-
-        alert('לקוח נוסף בהצלחה!');
-        this.setState({ name: '', defaultManager: '' });
+        try {
+            const response = await fetch(`${SERVER_URL}/add-client`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ name, managerUsername: defaultManager })
+            });
+            const data = await response.json();
+            if (data.success) {
+                alert('הלקוח נוסף בהצלחה!');
+                this.setState({ name: '', defaultManager: '' });
+            } else {
+                alert(data.message || 'הוספת לקוח נכשלה');
+            }
+        } catch (err) {
+            console.error("שגיאה בהוספת לקוח:", err);
+            alert('שגיאה בעת שליחת הבקשה');
+        }
     };
 
     render() {
-        const { name, defaultManager } = this.state;
-        const { workers } = this.context;
-
-        const managerOptions = workers.map(w => ({
-            value: w.username,
-            label: w.username
-        }));
+        const { name, defaultManager, users } = this.state;
+        const managerOptions = users.map(u => ({ value: u.username, label: u.username }));
 
         return (
-            <div style={{ padding: '2rem' }} dir="rtl">
-                <h3>הוספת לקוח חדש</h3>
+            <div className="page-container" dir="rtl">
+                <h2 className="page-header">הוספת לקוח חדש</h2>
 
-                <div className="mb-3">
+                <div className="form-section">
                     <label>שם הלקוח:</label>
                     <input
                         type="text"
@@ -65,11 +70,12 @@ class AddClientPage extends Component {
                         value={name}
                         onChange={this.handleChange}
                         className="form-control"
+                        placeholder="הזן שם לקוח..."
                     />
                 </div>
 
-                <div className="mb-3">
-                    <label>מנהל הלקוח:</label>
+                <div className="form-section">
+                    <label>מנהל דיפולטי:</label>
                     <Select
                         options={managerOptions}
                         value={managerOptions.find(opt => opt.value === defaultManager) || null}
@@ -78,9 +84,11 @@ class AddClientPage extends Component {
                     />
                 </div>
 
-                <button className="btn btn-success" onClick={this.handleAddClient}>
-                    הוסף לקוח
-                </button>
+                <div className="actions-row">
+                    <button className="btn-primary" onClick={this.handleAddClient}>
+                        הוסף לקוח
+                    </button>
+                </div>
             </div>
         );
     }

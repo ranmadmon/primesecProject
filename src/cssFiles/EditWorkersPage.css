@@ -1,0 +1,93 @@
+/* client/src/pages/EditWorkersPage.css */
+
+.edit-workers-page {
+    max-width: 800px;
+    margin: 2rem auto;
+    background: #f0f8ff; /* תכלת בהיר */
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 80, 0.1);
+}
+
+.edit-workers-page h3 {
+    text-align: center;
+    color: #003366; /* כחול כהה */
+    margin-bottom: 1rem;
+}
+
+.clients-section {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #cce7ff;
+    border-radius: 6px;
+}
+
+.client-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.client-row span {
+    font-weight: 500;
+}
+
+.actions-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+}
+
+.actions-row .btn-save,
+.actions-row .btn-delete {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.actions-row .btn-save {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.actions-row .btn-delete {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.modal-actions button {
+    margin-left: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-actions button:first-of-type {
+    background: #6c757d;
+    color: #fff;
+}
+
+.modal-actions button:last-of-type {
+    background: #007bff;
+    color: #fff;
+}

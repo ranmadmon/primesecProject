@@ -1,48 +1,70 @@
-import React, { useState } from 'react';
+// src/components/TaskCreationPage.jsx
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useAppData } from '../context/AppDataContext';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import '../cssFiles/page-layout.css'; // כיתת CSS משותפת
+import { SERVER_URL } from '../Utils/Constants.jsx';
 
 export default function TaskCreationPage() {
-    const { tasks, setTasks, abilities, setAbilities } = useAppData();
+    const { tasks, setTasks } = useAppData();
+    const [abilities, setAbilities] = useState([]);
     const [name, setName] = useState('');
     const [selectedReqs, setSelectedReqs] = useState([]);
     const [avgHours, setAvgHours] = useState('');
     const navigate = useNavigate();
 
-    const handleCreate = () => {
+    // Load abilities
+    useEffect(() => {
+        axios
+            .get(`${SERVER_URL}/abilities`)
+            .then(res => setAbilities(res.data.map(a => a.name)))
+            .catch(err => {
+                console.error('Failed to fetch abilities:', err);
+                setAbilities([]);
+            });
+    }, []);
+
+    const handleCreate = async () => {
         const trimmed = name.trim();
         if (!trimmed) {
             alert('יש להזין שם משימה');
             return;
         }
-        if (!avgHours || isNaN(avgHours) || avgHours <= 0) {
+        const hours = parseInt(avgHours, 10);
+        if (isNaN(hours) || hours <= 0) {
             alert('יש להזין שעות ממוצעות תקינות');
             return;
         }
-        const newId = tasks.length ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
-        const newTask = {
-            id: newId,
+
+        const payload = {
             name: trimmed,
+            averageTime: hours,
             requires: selectedReqs.map(r => r.value),
-            avgHours: parseFloat(avgHours),
         };
-        setTasks([...tasks, newTask]);
-        alert('המשימה נוצרה בהצלחה');
-        // נקה שדות
-        setName('');
-        setSelectedReqs([]);
-        setAvgHours('');
-        navigate('/home');
+
+        try {
+            const res = await axios.post(`${SERVER_URL}/tasks`, payload);
+            setTasks([...tasks, res.data]);
+            alert('המשימה נוצרה בהצלחה');
+            setName('');
+            setSelectedReqs([]);
+            setAvgHours('');
+            navigate('/home');
+        } catch (err) {
+            console.error('Error creating task:', err);
+            alert('שגיאה ביצירת המשימה, נסה שוב');
+        }
     };
 
     const options = abilities.map(a => ({ value: a, label: a }));
 
     return (
-        <div style={{ padding: '2rem' }} dir="rtl">
-            <h2>יצירת משימה חדשה</h2>
+        <div className="page-container" dir="rtl">
+            <h2 className="page-header">יצירת משימה חדשה</h2>
 
-            <div className="mb-3">
+            <div className="form-section">
                 <label>שם משימה:</label>
                 <input
                     type="text"
@@ -53,7 +75,7 @@ export default function TaskCreationPage() {
                 />
             </div>
 
-            <div className="mb-3">
+            <div className="form-section">
                 <label>דרישות (יכולות נדרשות):</label>
                 <Select
                     isMulti
@@ -64,7 +86,7 @@ export default function TaskCreationPage() {
                 />
             </div>
 
-            <div className="mb-3">
+            <div className="form-section">
                 <label>שעות ממוצעות:</label>
                 <input
                     type="number"
@@ -75,9 +97,11 @@ export default function TaskCreationPage() {
                 />
             </div>
 
-            <button className="btn btn-primary" onClick={handleCreate}>
-                צור משימה
-            </button>
+            <div className="actions-row">
+                <button className="btn-save" onClick={handleCreate}>
+                    צור משימה
+                </button>
+            </div>
         </div>
     );
 }

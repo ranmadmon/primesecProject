@@ -1,0 +1,154 @@
+/* File: homepage.css */
+
+/* ===== כללי ===== */
+.home-cards-container {
+    direction: rtl;
+    position: relative;
+    padding: 20px;
+    background: #f5f7fa;
+    min-height: 100vh;
+    text-align: right;
+}
+
+/* ===== Top Bar: סטטוסים + בר סינון ===== */
+.top-bar {
+    display: flex;
+    justify-content: flex-end; /* כל התוכן לימין */
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 24px;
+}
+
+/* ===== סטטיסטיקות ===== */
+.dashboard-stats {
+    display: flex;
+    gap: 16px;
+}
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    padding: 10px 14px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.stat-icon { font-size: 1.5rem; }
+.stat-number {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: right;
+}
+.stat-label {
+    font-size: 0.85rem;
+    color: #555;
+    text-align: right;
+}
+
+/* ===== בר סינון ===== */
+/* ===== Filter Buttons ===== */
+.cards-filter-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 12px 0;
+    background: #f5f7fa;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid #ddd;
+    margin-left: 679px;
+}
+
+.filter-button {
+    position: relative;
+    background: #fff;
+    border: 1px solid #1565c0;
+    color: #1565c0;
+    border-radius: 24px;
+    padding: 8px 16px 16px; /* יותר מקום לתחתית */
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.filter-button:hover {
+    background: #e3f2fd;
+}
+
+.filter-button.active {
+    background: #1565c0;
+    color: #fff;
+}
+
+/* החץ שמתחת לכל כפתור */
+.filter-button::after {
+    content: '▼';
+    position: absolute;
+    bottom: 2px;       /* מתחת לטקסט */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: #1565c0;     /* צבע ברירת מחדל */
+    opacity: 0.6;
+}
+
+/* כשפעיל, צובעים את החץ בלבן */
+.filter-button.active::after {
+    color: #fff;
+    opacity: 1;
+}
+
+.filter-button:focus {
+    outline: none;
+}
+
+
+/* ===== כפתור ייצוא ===== */
+.excel-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: #0d47a1;
+    color: #fff;
+    padding: 10px 18px;        /* הגדלנו padding */
+    font-size: 1rem;           /* טקסט גדול יותר */
+    border: none;
+    border-radius: 6px;        /* מעט יותר מעוגל */
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: background 0.2s;
+}
+.excel-btn:hover {
+    background: #124a86;
+}
+
+/* ===== ניווט עמודים ===== */
+.pagination-cards {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;                 /* ריווח גדול יותר בין הכפתורים */
+    margin-top: 20px;
+}
+.page-button {
+    min-width: 40px;           /* רוחב מינימלי גדול יותר */
+    height: 40px;              /* גובה גדול יותר */
+    line-height: 40px;
+    font-size: 1rem;           /* גודל כתב גדל */
+    border-radius: 6px;        /* עיגול עדין */
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #1e40af;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.page-button:hover {
+    background: #e0e7ff;
+}
+.page-button.active {
+    background: #1e40af;
+    color: #fff;
+    border-color: #1e40af;
+}
+
+/* השאר של הכרטיסים והמודאלים נשאר כפי שהיה ב־taskCard.css */

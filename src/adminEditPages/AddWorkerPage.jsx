@@ -1,82 +1,144 @@
-import React, { Component } from 'react';
-import Select from 'react-select';
-import { AppDataContext } from '../context/AppDataContext';
+// src/components/AddWorkerPage.jsx
+import React, { Component } from 'react'
+import Select from 'react-select'
+import '../cssFiles/page-layout.css'    // כאן מייבאים את העיצוב המשותף
+import { SERVER_URL } from '../Utils/Constants.jsx'
 
-class AddWorkerPage extends Component {
-    static contextType = AppDataContext;
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            username: '',
-            password: '',
-            fullName: '',
-            selectedAbilities: [],
-            selectedTeamId: '',
-        };
+export default class AddWorkerPage extends Component {
+    state = {
+        username: '',
+        password: '',
+        fullName: '',
+        lastName: '',
+        email: '',
+        phoneNumber: '',
+        selectedAbilities: [],
+        abilities: [],
+        selectedTeamId: '',
+        teams: []
     }
 
-    handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
-    };
+    async componentDidMount() {
+        await this.loadAbilities()
+        await this.loadTeams()
+    }
 
-    handleAbilityChange = (selectedOptions) => {
-        this.setState({ selectedAbilities: selectedOptions || [] });
-    };
+    loadAbilities = async () => {
+        try {
+            const res = await fetch(`${SERVER_URL}/abilities`)
+            const data = await res.json()
+            this.setState({ abilities: data.map(a => a.name) })
+        } catch (err) {
+            console.error('שגיאה בטעינת יכולות מהשרת:', err)
+        }
+    }
 
-    handleAddWorker = () => {
-        const { username, password, fullName, selectedAbilities, selectedTeamId } = this.state;
-        const { workers, setWorkers, userList, setUserList } = this.context;
+    loadTeams = async () => {
+        try {
+            const res = await fetch(`${SERVER_URL}/all-teams`)
+            const teams = await res.json()
+            this.setState({ teams })
+        } catch (err) {
+            console.error('שגיאה בטעינת צוותים מהשרת:', err)
+        }
+    }
 
-        if (!username || !password || !fullName || selectedAbilities.length === 0 || !selectedTeamId) {
-            alert('אנא מלא את כל השדות');
-            return;
+    handleChange = e => {
+        this.setState({ [e.target.name]: e.target.value })
+    }
+
+    handleAbilityChange = selectedOptions => {
+        this.setState({ selectedAbilities: selectedOptions || [] })
+    }
+
+    handleAddWorker = async () => {
+        const {
+            username, password, fullName, lastName,
+            email, phoneNumber, selectedAbilities, selectedTeamId
+        } = this.state
+
+        if (
+            !username ||
+            !password ||
+            !fullName ||
+            !lastName ||
+            !email ||
+            !phoneNumber ||
+            selectedAbilities.length === 0 ||
+            !selectedTeamId
+        ) {
+            return alert('אנא מלא את כל השדות')
         }
 
-        if (workers.find(w => w.username === username)) {
-            alert('שם המשתמש כבר קיים');
-            return;
+        // בדיקת קיימות שם משתמש
+        try {
+            const resp = await fetch(
+                `${SERVER_URL}/check-username?username=${encodeURIComponent(username)}`
+            )
+            const { taken } = await resp.json()
+            if (taken) {
+                return alert('שם המשתמש כבר קיים')
+            }
+        } catch (err) {
+            console.error('שגיאה בבדיקת שם משתמש:', err)
+            return alert('שגיאה בבדיקת זמינות שם המשתמש')
         }
 
-        const newWorker = {
-            username,
-            abilities: selectedAbilities.map(opt => opt.value),
-            team: parseInt(selectedTeamId),
-            hoursWorked: 0,
-        };
+        const abilitiesString = selectedAbilities.map(opt => opt.value).join(',')
 
-        const newUser = {
-            username,
-            password,
-            role: 'user'
-        };
-
-        setWorkers([...workers, newWorker]);
-        setUserList([...userList, newUser]);
-
-        alert('העובד נוסף בהצלחה!');
-
-        this.setState({
-            username: '',
-            password: '',
-            fullName: '',
-            selectedAbilities: [],
-            selectedTeamId: ''
-        });
-    };
+        try {
+            const response = await fetch(`${SERVER_URL}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    userName: username,
+                    password,
+                    name: fullName,
+                    lastName,
+                    email,
+                    role: 'worker',
+                    phoneNumber,
+                    teamId: selectedTeamId,
+                    abilities: abilitiesString
+                })
+            })
+            const data = await response.json()
+            if (data.success) {
+                alert('העובד נוסף בהצלחה!')
+                this.setState({
+                    username: '',
+                    password: '',
+                    fullName: '',
+                    lastName: '',
+                    email: '',
+                    phoneNumber: '',
+                    selectedAbilities: [],
+                    selectedTeamId: ''
+                })
+            } else {
+                alert(data.message || 'הרישום נכשל - בדוק את הנתונים')
+            }
+        } catch (err) {
+            console.error('שגיאה ברישום עובד:', err)
+            alert('שגיאה בהוספת עובד')
+        }
+    }
 
     render() {
-        const { username, password, fullName, selectedAbilities, selectedTeamId } = this.state;
-        const { abilities, teams } = this.context;
+        const {
+            username, password, fullName, lastName,
+            email, phoneNumber, selectedAbilities,
+            abilities, selectedTeamId, teams
+        } = this.state
 
-        const abilityOptions = abilities.map(a => ({ value: a, label: a }));
-        const teamOptions = teams.map(t => ({ value: t.id, label: t.name }));
+        const abilityOptions = abilities.map(a => ({ value: a, label: a }))
+        const teamOptions    = teams.map(t => ({ value: t.id, label: t.name }))
 
         return (
-            <div style={{ padding: '2rem' }} dir="rtl">
-                <h3>הוספת עובד חדש</h3>
+            <div className="page-container" dir="rtl">
+                <h2 className="page-header">הוספת עובד חדש</h2>
 
-                <div className="mb-3">
+                <div className="form-section">
                     <label>שם משתמש:</label>
                     <input
                         type="text"
@@ -84,32 +146,71 @@ class AddWorkerPage extends Component {
                         value={username}
                         onChange={this.handleChange}
                         className="form-control"
+                        placeholder="שם משתמש"
                     />
                 </div>
 
-                <div className="mb-3">
-                    <label>סיסמא:</label>
+                <div className="form-section">
+                    <label>סיסמה:</label>
                     <input
                         type="password"
                         name="password"
                         value={password}
                         onChange={this.handleChange}
                         className="form-control"
+                        placeholder="סיסמה"
                     />
                 </div>
 
-                <div className="mb-3">
-                    <label>שם העובד:</label>
+                <div className="form-section">
+                    <label>שם פרטי:</label>
                     <input
                         type="text"
                         name="fullName"
                         value={fullName}
                         onChange={this.handleChange}
                         className="form-control"
+                        placeholder="שם פרטי"
                     />
                 </div>
 
-                <div className="mb-3">
+                <div className="form-section">
+                    <label>שם משפחה:</label>
+                    <input
+                        type="text"
+                        name="lastName"
+                        value={lastName}
+                        onChange={this.handleChange}
+                        className="form-control"
+                        placeholder="שם משפחה"
+                    />
+                </div>
+
+                <div className="form-section">
+                    <label>אימייל:</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value={email}
+                        onChange={this.handleChange}
+                        className="form-control"
+                        placeholder="Email"
+                    />
+                </div>
+
+                <div className="form-section">
+                    <label>טלפון:</label>
+                    <input
+                        type="text"
+                        name="phoneNumber"
+                        value={phoneNumber}
+                        onChange={this.handleChange}
+                        className="form-control"
+                        placeholder="טלפון"
+                    />
+                </div>
+
+                <div className="form-section">
                     <label>יכולות:</label>
                     <Select
                         isMulti
@@ -117,29 +218,25 @@ class AddWorkerPage extends Component {
                         value={selectedAbilities}
                         onChange={this.handleAbilityChange}
                         placeholder="בחר יכולות..."
-                        className="basic-multi-select"
-                        classNamePrefix="select"
                     />
                 </div>
 
-                <div className="mb-3">
+                <div className="form-section">
                     <label>צוות:</label>
                     <Select
                         options={teamOptions}
                         value={teamOptions.find(t => t.value === parseInt(selectedTeamId)) || null}
-                        onChange={(selected) =>
-                            this.setState({ selectedTeamId: selected?.value || '' })
-                        }
+                        onChange={opt => this.setState({ selectedTeamId: opt?.value || '' })}
                         placeholder="בחר צוות..."
                     />
                 </div>
 
-                <button className="btn btn-success" onClick={this.handleAddWorker}>
-                    הוסף עובד
-                </button>
+                <div className="actions-row">
+                    <button className="btn-save" onClick={this.handleAddWorker}>
+                        הוסף עובד
+                    </button>
+                </div>
             </div>
-        );
+        )
     }
 }
-
-export default AddWorkerPage;

@@ -1,0 +1,396 @@
+:root {
+    --background-color: #3a3f47; /* Blue-gray */
+    --gradient-color: linear-gradient(135deg, #b0c4de, #f5f5f5); /* Light steel blue to white gradient */ /* Metallic blue-gray with darker shades */
+    --color-scheme: #1e90ff; /* Dodger blue */
+    --color-1-bright: #87cefa; /* Light sky blue */
+    --color-2-bright: #4682b4; /* Steel blue */
+    --color-1-brighter: #add8e6; /* Light blue */
+    --color-2-brighter: #5f9ea0; /* Cadet blue */
+    --gradient-angle: 135deg; /* Default gradient angle */
+}
+.form-page{
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+    font-family: Inter, sans-serif;
+    color: var(--color-scheme);
+    background: var(--gradient-color);
+}
+
+.form-container {
+    width: 80%;
+    height: 90%;
+    border-radius: 16px;
+    box-shadow: 0 0 20px white;
+    text-align: center;
+    transition: width 0.5s;
+}
+.right-side{
+    width: 45%;
+    height: 100%;
+    background: var(--gradient-color);
+    border-radius: 16px;
+    transition: width 0.4s ease;
+}
+.image-container img{
+    transition: scale 0.4s ease, width 0.4s ease, height 0.4s ease;
+}
+
+.left-side{
+    flex-direction: column;
+    justify-content: center;
+    width: 55%;
+    height: 100%;
+    border-radius: 16px;
+    transition: width 0.4s ease;
+}
+.form-headers{
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+    height: 20%;
+}
+.form{
+    width: 95%;
+    height: 60%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 1.2rem;
+}
+#login{
+    gap: 1rem;
+    height: auto;
+}
+
+.image-container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.4s ease,height 0.4s ease;
+}
+.input-container {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    text-align: center;
+}
+.submit-container{
+    width: 95%;
+    height: 15%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.3rem;
+}
+.form-label{
+    width: 100%;
+    height: auto;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--color-scheme);
+    text-align: left;
+}
+.form-input{
+    width: 100%;
+    height: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    font-size: 1rem;
+    transition: outline-color 0.5s ease;
+    text-indent: 0.4rem;
+
+}
+
+.form-input::-webkit-outer-spin-button,
+.form-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.form-input[type="email"]:not(:placeholder-shown):valid,
+.form-input[type="tel"]:not(:placeholder-shown):valid{
+    background-image: url("../../assets/form/check.png");
+    background-position: 95% center;
+    background-repeat: no-repeat;
+    background-size: 25px 25px;
+    /*padding-left: 30px;*/
+}
+
+.form-input[name="Password"]{
+    text-indent: 2rem;
+    /*background-image: url("../assets/form/show_password.png");*/
+    /*background-position: 0.2rem center;*/
+    /*background-repeat: no-repeat;*/
+    /*background-size: 25px 25px;*/
+}
+.form-input[name="Confirm Password"]{
+    text-indent: 2rem;
+    /*background-image: url("../assets/form/show_password.png");*/
+    /*background-position: 0.2rem center;*/
+    /*background-repeat: no-repeat;*/
+    /*background-size: 25px 25px;*/
+}
+.show-password{
+    background-color: transparent;
+    border: none;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-size: 25px 25px;
+    background-image: url("../../assets/form/show_password.png");
+    background-position: 0.2rem 0.35rem;
+}
+.form-input[required]:not(:focus) {
+    outline: 3px solid rgba(188, 188, 188, 0.41);
+}
+
+.form-input[required]:not(:placeholder-shown):invalid {
+    outline: 3px solid rgb(255, 108, 108);
+}
+
+.form-input[required]:not(:placeholder-shown):invalid:focus {
+    outline: 3px solid rgb(255, 222, 118);
+}
+
+.form-input[required]:not(:placeholder-shown):valid {
+    outline: 3px solid rgb(127, 255, 101);
+}
+
+.requirement-message {
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+    border-radius: 5px;
+    position: absolute;
+    top: calc(100% + 5px); /* ממקם את ההודעה קצת מתחת לשדה */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.85rem; /* קצת יותר גדול */
+    padding: 0.6em 1em;
+    width: auto;
+    max-width: 350px; /* רוחב גדול יותר להודעה */
+    background-color: rgba(255, 108, 108, 0.9); /* אדום שקוף */
+    color: white;
+    opacity: 0;
+    z-index: 9999; /* מבטיח שההודעה תהיה מעל הכול */
+    white-space: normal; /* מאפשר מעבר שורה */
+    word-wrap: break-word; /* שובר מילים אם צריך */
+    pointer-events: none;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+/* הצגת ההודעה בגודל מותאם כאשר השדה לא תקין */
+.form-input[required]:not(:placeholder-shown):invalid + .requirement-message,
+.form-input[required]:not(:placeholder-shown):invalid:focus + .requirement-message {
+    opacity: 1;
+    transform: translateX(-50%) translateY(2px); /* הרמה קטנה של ההודעה */
+    font-size: 0.85rem;
+    background-color: rgb(255, 108, 108);
+    padding: 0.5em 1em;
+}
+
+/* הצגת הודעה צהובה כאשר המשתמש מתקן שגיאה */
+.form-input[required]:not(:placeholder-shown):invalid:focus + .requirement-message {
+    background-color: rgb(255, 222, 118);
+}
+
+/* הסתרת ההודעה כאשר השדה תקין */
+.form-input[required]:not(:placeholder-shown):valid + .requirement-message {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0);
+}
+
+
+
+.input-pair{
+    width: 100%;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+}
+
+.input-container select {
+    appearance: none;
+    width: 100%;
+}
+
+#submit-button{
+    width: 100%;
+    height: 40px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    /*color: #fff;*/
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+#submit-button:disabled {
+    background: #ccc;
+    cursor: default;
+}
+
+#submit-button.active {
+    cursor: pointer;
+    color: white;
+    border: 1px solid white;
+    background: linear-gradient(var(--gradient-angle), var(--color-1-bright), var(--color-2-bright));
+    transition: --color-1-bright 1s, --color-2-bright 1s, scale 0.3s ease;
+}
+#submit-button.active:hover{
+    --color-1-bright: var(--color-1-brighter);
+    --color-2-bright: var(--color-2-brighter);
+    scale: 1.02;
+}
+.forgot-password-button{
+    width: 100%;
+    height: 45px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: right;
+    color: var(--color-scheme);
+}
+.have-an-account{
+    width: 100%;
+    height: auto;
+    gap: 1rem;
+}
+
+.have-an-account-button{
+    width: 100px;
+    height: 30px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--color-scheme);
+}
+
+.code-container{
+    top: 50%;        /* מרים אותו מעט למעלה (ערך קטן יותר מעלה יותר) */
+    left: 50%;       /* מזיז מעט שמאלה (ערך קטן יותר שמאלה יותר) */
+    transform: translate(-50%, -50%);
+    width: 30rem;
+    height: 30rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 4rem;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.57);
+    box-shadow: 0 0 10px pink;
+    border: 1px solid rgba(255, 192, 203, 0.56);
+    color: var(--color-scheme);
+    backdrop-filter: blur(10px);
+    border-radius: 1.5rem;
+    scale: 1;
+    transition: scale 0.4s ease;
+}
+.otp-input{
+    width: 100%;
+    height: 2rem;
+    text-align: center;
+    gap: 1rem;
+    font-size: 2rem;
+    color: var(--color-scheme);
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    /*border-bottom: 3px solid rgba(255, 255, 255, 0.8);*/
+    user-select: none;
+}
+.otp-input:focus{
+    outline:none;
+}
+.otp-input:not(:focus){
+    border-bottom: 3px solid rgba(255, 255, 255, 0.41);
+    --webkit-outline: transparent;
+}
+.otp-input[required]:not(:placeholder-shown):invalid{
+    border-bottom: 3px solid rgb(255, 108, 108);
+}
+.otp-input[required]:not(:placeholder-shown):invalid:focus{
+    border-bottom: 3px solid rgb(255, 222, 118);
+}
+.otp-input[required]:not(:placeholder-shown):valid {
+    border-bottom: 3px solid rgb(127, 255, 101);
+    --webkit-border-bottom: transparent;
+}
+
+.password-requirement-bubble{
+    width: 50px;
+    height: 50px;
+}
+.form-input[type="password"] + .password-tooltip{
+    width: 100%;
+    height: 50px;
+    background-color:blue;
+    opacity:1;
+    transition: background-color .3s ease;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-input[type="password"]:focus + .password-tooltip{
+        background-color: red;
+}
+
+@media (max-width:1500px){
+    .image-container img{
+        scale: 0.9;
+    }
+}
+@media (max-width:1300px){
+    .image-container img{
+        scale: 0.8;
+    }
+}
+@media (max-width:1150px){
+    .image-container img{
+        scale: 0.7;
+    }
+}
+@media (max-width: 1000px){
+    .right-side{
+        width: 0;
+    }
+    .image-container img{
+        scale:0;
+    }
+    .left-side{
+        width: 100%;
+    }
+
+}
+
+
+

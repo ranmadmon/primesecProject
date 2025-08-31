@@ -1,0 +1,134 @@
+.pd-main-container {
+    background-image: url('../images/backgrounImage.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pd-container {
+    max-width: 800px;
+    width: 100%;
+    padding: 2rem;
+    background: rgba(255,255,255,0.95);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.pd-container h2 {
+    text-align: center;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.pd-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.pd-section label {
+    width: 140px;
+    font-weight: bold;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pd-section input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.pd-section button {
+    padding: 0.5rem 1rem;
+    background-color: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pd-section button:hover {
+    background-color: #2563eb;
+}
+
+.pd-extra {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    color: #333;
+}
+
+.pd-extra h3 {
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.25rem;
+}
+
+.pd-extra ul {
+    margin: 0.5rem 0;
+    padding-left: 1.2rem;
+}
+
+.pd-extra p {
+    grid-column: span 2;
+}
+
+.pd-msg {
+    text-align: center;
+    margin-top: 1rem;
+    color: #059669;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.loading, .error {
+    text-align: center;
+    font-weight: 500;
+    color: #888;
+}
+
+.error {
+    color: #dc2626;
+}
+
+.spin-icon {
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
+
+@media (max-width: 640px) {
+    .pd-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pd-section label {
+        width: 100%;
+    }
+
+    .pd-extra {
+        grid-template-columns: 1fr;
+    }
+}

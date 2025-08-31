@@ -1,155 +1,105 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { UserContext } from '../context/UserContext.jsx';
-import { AppDataContext } from '../context/AppDataContext';
+import React, { useState, useEffect, useRef } from 'react';
+import Cookies from 'universal-cookie';
+import axios from 'axios';
+import { Navigate } from 'react-router-dom';
+import { User, Mail, Phone, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import '../cssFiles/PersonalDetailsPage.css';
 
 export default function PersonalDetailsPage() {
-    const { user, setUser } = useContext(UserContext);
-    const { workers, setWorkers, clients, setClients, tasks, setTasks, userList, setUserList, teams } = useContext(AppDataContext);
+    const [details, setDetails] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [newUsername, setNewUsername] = useState('');
+    const [newEmail, setNewEmail] = useState('');
+    const [newPhone, setNewPhone] = useState('');
+    const [msg, setMsg] = useState('');
 
-    // Redirect if not logged in
-    if (!user || !user.isLoggedIn) {
-        return <h2 style={{ textAlign: 'center' }}>עליך להתחבר קודם</h2>;
-    }
+    const token = new Cookies().get('token');
+    const hasFetched = useRef(false);
 
-    // Form state
-    const [username, setUsername] = useState(user.username);
-    // get initial password from userList in AppDataContext
-    const initialPassword = userList.find(u => u.username === user.username)?.password || '';
-    const [password, setPassword] = useState(initialPassword);
-    const [showPassword, setShowPassword] = useState(false);
+    useEffect(() => {
+        if (!token || hasFetched.current) return;
+        hasFetched.current = true;
 
-    // Mouse handlers for hover reveal
-    const handleMouseEnter = () => setShowPassword(true);
-    const handleMouseLeave = () => setShowPassword(false);
+        axios.get('http://localhost:8080/my-details', { params: { token } })
+            .then(resp => {
+                const d = resp.data;
+                setDetails(d);
+                setNewUsername(d.username);
+                setNewEmail(d.email);
+                setNewPhone(d.phone);
+            })
+            .catch(() => setError('שגיאה בטעינת הפרטים ⚠️'))
+            .finally(() => setLoading(false));
+    }, [token]);
 
-    // Save personal changes
-    const handleSave = () => {
-        if (!username.trim()) return alert('יש להזין שם משתמש');
-        if (!password) return alert('יש להזין סיסמה');
+    if (!token) return <Navigate to="/login" replace />;
+    if (loading) return <p className="loading"><Loader2 className="spin-icon"/> טוען...</p>;
+    if (error) return <p className="error"><AlertCircle/> {error}</p>;
 
-        const oldUsername = user.username;
-        const newUsername = username.trim();
-
-        // Update userList
-        setUserList(
-            userList.map(u =>
-                u.username === oldUsername
-                    ? { ...u, username: newUsername, password }
-                    : u
-            )
-        );
-
-        // Update UserContext
-        setUser({ ...user, username: newUsername, password });
-
-        // Update workers
-        setWorkers(
-            workers.map(w =>
-                w.username === oldUsername
-                    ? { ...w, username: newUsername }
-                    : w
-            )
-        );
-
-        // Update clients
-        setClients(
-            clients.map(c =>
-                c.defaultManager === oldUsername
-                    ? { ...c, defaultManager: newUsername }
-                    : c
-            )
-        );
-
-        // Update tasks
-        setTasks(
-            tasks.map(t =>
-                t.assignedTo === oldUsername
-                    ? { ...t, assignedTo: newUsername }
-                    : t
-            )
-        );
-
-        alert('הפרטים נשמרו בהצלחה');
+    const doUpdate = (field, value) => {
+        setMsg('');
+        const urlMap = {
+            username: '/update-username',
+            email: '/update-email',
+            phone: '/update-phone',
+        };
+        axios.post(`http://localhost:8080${urlMap[field]}`, null, {
+            params: {
+                token,
+                ['new' + field.charAt(0).toUpperCase() + field.slice(1)]: value
+            }
+        })
+            .then(resp => {
+                if (resp.data.success) {
+                    setDetails(d => ({ ...d, [field]: value }));
+                    setMsg('עודכן בהצלחה ✅');
+                } else {
+                    throw new Error();
+                }
+            })
+            .catch(() => setMsg('השורה תפוסה או לא תקינה ⚠️'));
     };
 
-    // Data for display
-    const meWorker = workers.find(w => w.username === user.username) || {};
-    const hoursWorked = meWorker.hoursWorked || 0;
-    const abilities = meWorker.abilities || [];
-    const myClients = clients.filter(c => c.defaultManager === user.username).map(c => c.name);
-    const myTeam = teams.find(t => t.id === meWorker.team);
-    const teamMembers = workers.filter(w => w.team === meWorker.team).map(w => w.username);
-    const isLeader = user.role === 'teamLeader';
-
     return (
-        <div style={{ padding: '2rem' }} dir="rtl">
-            <h2>פרטים אישיים</h2>
+        <div className="pd-main-container">
+            <div className="pd-container" dir="rtl">
+                <h2>📋 פרטים אישיים</h2>
 
-            <div className="mb-3">
-                <label>שם משתמש:</label>
-                <input
-                    type="text"
-                    className="form-control"
-                    value={username}
-                    onChange={e => setUsername(e.target.value)}
-                />
+                <div className="pd-section">
+                    <label><User className="icon"/> שם משתמש:</label>
+                    <input value={newUsername} onChange={e => setNewUsername(e.target.value)}/>
+                    <button onClick={() => doUpdate('username', newUsername)}>עדכון שם</button>
+                </div>
+
+                <div className="pd-section">
+                    <label><Mail className="icon"/> אימייל:</label>
+                    <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)}/>
+                    <button onClick={() => doUpdate('email', newEmail)}>עדכון אימייל</button>
+                </div>
+
+                <div className="pd-section">
+                    <label><Phone className="icon"/> טלפון:</label>
+                    <input value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="05xxxxxxxx"/>
+                    <button onClick={() => doUpdate('phone', newPhone)}>עדכון טלפון</button>
+                </div>
+
+                <div className="pd-extra">
+                    <div>
+                        <h3>⭐ יכולות</h3>
+                        <ul>{details.abilities.length ? details.abilities.map(a => <li key={a}>{a}</li>) : <li>אין יכולות</li>}</ul>
+                    </div>
+                    <div>
+                        <h3>👥 לקוחות מנוהלים</h3>
+                        <ul>{details.clients.length ? details.clients.map(c => <li key={c}>{c}</li>) : <li>אין לקוחות</li>}</ul>
+                    </div>
+                    <p>📌 <strong>שם צוות:</strong> {details.teamName || 'לא משויך'}</p>
+                    <p>👔 <strong>ראש צוות:</strong> {details.isLeaderYesOrNo}</p>
+                    <p>⏰ <strong>שעות עבודה:</strong> {details.hoursWorked}</p>
+                </div>
+
+                {msg && <p className="pd-msg"><CheckCircle/> {msg}</p>}
             </div>
-
-            <div className="mb-3" style={{ position: 'relative' }}>
-                <label>סיסמה:</label>
-                <input
-                    type={showPassword ? 'text' : 'password'}
-                    className="form-control"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    style={{ paddingLeft: '2rem' }}
-                />
-                <span
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '8px',
-                        transform: 'translateY(-50%)',
-                        cursor: 'pointer',
-                        fontSize: '1.2rem'
-                    }}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-          👁️
-        </span>
-            </div>
-
-            <button className="btn btn-primary mb-4" onClick={handleSave}>
-                שמור שינויים
-            </button>
-
-            <h3>תחומי ההתמחות שלי</h3>
-            <ul>
-                {abilities.length > 0
-                    ? abilities.map(a => <li key={a}>{a}</li>)
-                    : <li>אין נתונים</li>}
-            </ul>
-
-            <h3>לקוחות קבועים שלי</h3>
-            <ul>
-                {myClients.length > 0
-                    ? myClients.map(c => <li key={c}>{c}</li>)
-                    : <li>אין לקוחות קבועים</li>}
-            </ul>
-
-            <h3>הצוות שלי</h3>
-            <p><strong>שם צוות:</strong> {myTeam?.name || 'לא משויך'}</p>
-            <p><strong>תפקיד:</strong> {isLeader ? 'ראש צוות' : 'חבר צוות'}</p>
-            <ul>
-                {teamMembers.length > 0
-                    ? teamMembers.map(m => <li key={m}>{m}</li>)
-                    : <li>אין חברים</li>}
-            </ul>
-
-            <h3>שעות עבודה</h3>
-            <p>{hoursWorked} שעות</p>
         </div>
     );
 }

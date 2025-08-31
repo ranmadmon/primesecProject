@@ -1,0 +1,67 @@
+.task-assignment-background {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../../../primeSe/src/images/backgrounImage.png');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.task-assignment-container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    transform: translateY(-10%);
+}
+
+.header-center {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary-center, .btn-success-center {
+    display: block;
+    margin: 1.5rem auto;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-primary-center {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+.btn-success-center {
+    background-color: #28a745;
+    color: #ffffff;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.react-select__control {
+    width: 100%;
+    border-radius: 5px;
+    margin-top: 0.5rem;
+}

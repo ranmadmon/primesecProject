@@ -1,0 +1,73 @@
+/* תכלת בהיר רקע כללי לכל הדפים */
+
+.page-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    background: #f0f8ff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 80, 0.1);
+    dir: rtl;
+}
+
+/* כותרת מרכזית */
+.page-header {
+    text-align: center;
+    color: #003366;
+    margin-bottom: 1.5rem;
+}
+
+/* כל סקשן (טפסים, טבלאות וכו') */
+.form-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #cce7ff;
+    border-radius: 6px;
+}
+
+/* כפתורים ראשיים */
+.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* כפתור מחיקה/שלילי */
+.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* שורה של פעולה (שמור / מחק) */
+.actions-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+/* רשימות פשוטות */
+.list-group {
+    list-style: none;
+    padding: 0;
+}
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+/* טקסט טעינה/אין תוכן */
+.placeholder-text {
+    text-align: center;
+    color: #666;
+}

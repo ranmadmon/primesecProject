@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import Select from 'react-select';
-import Card from "../components/Card.jsx";
+import Card from "../pages/Card.jsx";
 import { AppDataContext } from '../context/AppDataContext';
 
 /**

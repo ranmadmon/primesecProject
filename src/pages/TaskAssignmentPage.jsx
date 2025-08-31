@@ -1,190 +1,192 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { UserContext } from '../context/UserContext';
-import { AppDataContext } from '../context/AppDataContext';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+import { SERVER_URL } from '../Utils/Constants.jsx';
+import '../cssFiles/TaskAssignmentPage.css';
 
-function TaskAssignmentPage() {
-    const { user, addTask } = useContext(UserContext);
-    const { workers, setWorkers, tasks, clients } = useContext(AppDataContext);
+const ROLE_LABELS = {
+    1: 'עובד רגיל',
+    2: 'ראש צוות',
+    3: 'אדמין',
+    4: 'אדמין ראש צוות'
+};
 
-    const [selectedTaskId, setSelectedTaskId] = useState('');
-    const [selectedClientId, setSelectedClientId] = useState('');
-    const [selectedWorker, setSelectedWorker] = useState('');
-    const [availableWorkers, setAvailableWorkers] = useState([]);
-    const [customHours, setCustomHours] = useState('');
+export default function TaskAssignmentPage() {
+    const cookies = new Cookies();
+    const token = cookies.get('token');
 
-    // עדכון שעות ברירת מחדל כשבוחרים משימה
+    const [tasks,             setTasks]             = useState([]);
+    const [clients,           setClients]           = useState([]);
+    const [available,         setAvailable]         = useState([]);
+    const [loading,           setLoading]           = useState(true);
+    const [taskId,            setTaskId]            = useState(null);
+    const [clientId,          setClientId]          = useState(null);
+    const [selectedUsers,     setSelectedUsers]     = useState([]);
+    const [hours,             setHours]             = useState('');
+    const [currentUserTeamId, setCurrentUserTeamId] = useState(null);
+
+    // טעינת משימות, לקוחות וזהות המשתמש
     useEffect(() => {
-        const task = tasks.find(t => t.id === +selectedTaskId);
-        if (task) setCustomHours(task.avgHours);
-        else {
-            setCustomHours('');
-            setAvailableWorkers([]);
-            setSelectedWorker('');
+        async function fetchData() {
+            try {
+                const [tRes, cRes, uRes] = await Promise.all([
+                    axios.get(`${SERVER_URL}/tasks`,   { params: { token } }),
+                    axios.get(`${SERVER_URL}/clients`, { params: { token } }),
+                    axios.get(`${SERVER_URL}/get-username-by-token`, { params: { token } })
+                ]);
+                setTasks(tRes.data);
+                setClients(cRes.data);
+
+                // שליפת המידע על המשתמש הנוכחי כדי לדעת teamId
+                const username = uRes.data;
+                const workers = await axios.get(`${SERVER_URL}/workers`, { params: { token } });
+                const me = workers.data.find(w => w.username === username);
+                setCurrentUserTeamId(me?.teamId ?? null);
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setLoading(false);
+            }
         }
-    }, [selectedTaskId, tasks]);
+        fetchData();
+    }, [token]);
 
-    if (!user) return <div>טוען נתוני משתמש...</div>;
-    if (user.role !== 'admin') return <h2>עמוד זה פתוח רק לאדמין</h2>;
+    // עדכון שעות ברירת מחדל בעת בחירת משימה
+    useEffect(() => {
+        if (taskId != null) {
+            const task = tasks.find(t => t.id === +taskId);
+            setHours(task?.averageTime ?? '');
+            setAvailable([]);
+            setSelectedUsers([]);
+        }
+    }, [taskId, tasks]);
 
-    // הכנת ערכי Select (null מפעיל פלייסהולדר)
-    const selectedTaskOption = (() => {
-        const t = tasks.find(t => t.id === +selectedTaskId);
-        return t ? { value: t.id, label: t.name } : null;
-    })();
-    const selectedClientOption = (() => {
-        const c = clients.find(c => c.id === +selectedClientId);
-        return c ? { value: c.id, label: c.name } : null;
-    })();
-    const selectedWorkerOption = (() => {
-        const w = availableWorkers.find(w => w.username === selectedWorker);
-        return w
-            ? { value: w.username, label: w.username }
-            : null;
-    })();
+    if (loading) return <p>טוען נתונים…</p>;
+    if (!token)   return <h2>אנא התחבר/י</h2>;
 
-    const handleFindWorkers = () => {
-        const task = tasks.find(t => t.id === +selectedTaskId);
-        const client = clients.find(c => c.id === +selectedClientId);
-        if (!task || !client) {
-            alert('יש לבחור גם משימה וגם לקוח');
+    const handleFindWorkers = async () => {
+        if (!taskId || !clientId) {
+            alert('אנא בחר/י משימה ולקוח');
             return;
         }
-
-        const required = task.requires || [];
-        const canDo = w => required.every(r => w.abilities.includes(r));
-        const manager = workers.find(w => w.username === client.defaultManager);
-        const teamMems = workers.filter(w => w.team === manager?.team);
-        const notTeam = workers.filter(w => w.team !== manager?.team);
-
-        const buildGroup = (list, isSameTeam, capability) =>
-            list
-                .filter(w => canDo(w) === capability)
-                .sort((a, b) => a.hoursWorked - b.hoursWorked)
-                .map(w => ({
-                    ...w,
-                    isManager: w.username === manager?.username,
-                    isSameTeam,
-                    isCapable: capability
-                }));
-
-        const group2 = buildGroup(teamMems, true, true);
-        const group3 = buildGroup(teamMems, true, false);
-        const group4 = buildGroup(notTeam, false, true);
-        const group5 = buildGroup(notTeam, false, false);
-
-        const sorted = [];
-        if (manager && canDo(manager)) {
-            sorted.push({
-                ...manager,
-                isManager: true,
-                isSameTeam: false,
-                isCapable: true
-            });
-            sorted.push(...group2.filter(w => w.username !== manager.username));
-        } else {
-            sorted.push(...group2);
+        try {
+            const res = await axios.get(
+                `${SERVER_URL}/find-workers`,
+                { params: { taskId, clientId, token } }
+            );
+            const reqs = tasks.find(t => t.id === +taskId)?.requires || [];
+            const capable = res.data.filter(w =>
+                reqs.every(r => (w.abilities || []).includes(r))
+            );
+            setAvailable(capable);
+            setSelectedUsers([]);
+        } catch (e) {
+            console.error(e);
+            alert('שגיאה בטעינת עובדים');
         }
-        sorted.push(...group3, ...group4, ...group5);
-
-        setAvailableWorkers(sorted);
-        setSelectedWorker(sorted[0]?.username || '');
     };
 
-    const handleAssignTask = () => {
-        const task = tasks.find(t => t.id === +selectedTaskId);
-        const client = clients.find(c => c.id === +selectedClientId);
-        const hours = parseFloat(customHours) || 0;
-        if (!task || !client || !selectedWorker) {
-            alert('חסר מידע');
+    const handleAssign = async () => {
+        if (selectedUsers.length === 0) {
+            alert('אנא בחר/י לפחות עובד אחד');
             return;
         }
+        if (!hours || isNaN(hours) || hours <= 0) {
+            alert('אנא הזן/י מספר שעות תקין');
+            return;
+        }
+        const params = new URLSearchParams();
+        params.append('token',    token);
+        params.append('taskId',   taskId);
+        params.append('clientId', clientId);
+        params.append('hours',    hours);
+        selectedUsers.forEach(u => params.append('usernames', u.value));
 
-        const updated = workers.map(w =>
-            w.username === selectedWorker
-                ? { ...w, hoursWorked: w.hoursWorked + hours }
-                : w
-        );
-        setWorkers(updated);
-
-        addTask({
-            taskId: task.id,
-            title: task.name,
-            clientId: client.id,
-            client: client.name,
-            assignedTo: selectedWorker,
-            hoursRequired: hours
-        });
-
-        alert('המשימה נוספה בהצלחה');
-        // ניקוי כל השדות בחזרה לברירת מחדל
-        setSelectedTaskId('');
-        setSelectedClientId('');
-        setSelectedWorker('');
-        setCustomHours('');
-        setAvailableWorkers([]);
+        try {
+            await axios.post(`${SERVER_URL}/tasks/assign?${params.toString()}`);
+            alert('המשימה הוקצתה בהצלחה');
+            setTaskId(null);
+            setClientId(null);
+            setAvailable([]);
+            setSelectedUsers([]);
+            setHours('');
+        } catch (e) {
+            console.error(e);
+            alert('שגיאה בהקצאת המשימה');
+        }
     };
 
     return (
-        <div style={{ padding: '2rem' }} dir="rtl">
-            <h2>סידור משימה</h2>
+        <div className="task-assignment-background" dir="rtl">
+            <div className="task-assignment-container">
+                <h2 className="header-center">הקצאת משימה</h2>
 
-            <div className="mb-3">
-                <label>בחר משימה:</label>
                 <Select
+                    placeholder="● בחירת משימה ●"
                     options={tasks.map(t => ({ value: t.id, label: t.name }))}
-                    value={selectedTaskOption}
-                    onChange={e => setSelectedTaskId(e?.value || '')}
-                    placeholder="בחר משימה..."
+                    onChange={o => setTaskId(o.value)}
+                    value={taskId != null && { value: taskId, label: tasks.find(t => t.id === taskId)?.name }}
                 />
-            </div>
 
-            <div className="mb-3">
-                <label>בחר לקוח:</label>
                 <Select
+                    className="mt-3"
+                    placeholder="● בחירת לקוח ●"
                     options={clients.map(c => ({ value: c.id, label: c.name }))}
-                    value={selectedClientOption}
-                    onChange={e => setSelectedClientId(e?.value || '')}
-                    placeholder="בחר לקוח..."
+                    onChange={o => setClientId(o.value)}
+                    value={clientId != null && { value: clientId, label: clients.find(c => c.id === clientId)?.name }}
                 />
-            </div>
 
-            <button className="btn btn-primary" onClick={handleFindWorkers}>
-                מצא עובדים מתאימים
-            </button>
+                <button className="btn-primary-center mt-3" onClick={handleFindWorkers}>
+                    🔍 איתור עובדים מתאימים
+                </button>
 
-            {availableWorkers.length > 0 && (
-                <>
-                    <div className="mt-4">
-                        <label>בחר עובד:</label>
+                {available.length > 0 && (
+                    <>
                         <Select
-                            options={availableWorkers.map(w => ({
+                            className="mt-4"
+                            isMulti
+                            placeholder="● בחרי/בחר עובדים להקצאה ●"
+                            options={available.map(w => ({
                                 value: w.username,
-                                label: `${w.username} (${w.isManager ? 'מנהל לקוח' : w.isSameTeam ? 'חבר צוות' : 'לא חבר צוות'} | ${w.isCapable ? 'מתאים' : 'לא מתאים'} | ${w.hoursWorked} שעות)`
+                                label: w.username,
+                                data: {
+                                    roleLabel: ROLE_LABELS[w.roleId],
+                                    hoursWorked: w.hoursWorked,
+                                    isTeamMember: w.teamId === currentUserTeamId
+                                }
                             }))}
-                            value={selectedWorkerOption}
-                            onChange={e => setSelectedWorker(e?.value || '')}
-                            placeholder="בחר עובד..."
+                            formatOptionLabel={opt => (
+                                <div style={{ lineHeight: 1.2 }}>
+                                    <div style={{ fontWeight: 600 }}>{opt.label}</div>
+                                    <div style={{ fontSize: '0.85em', color: '#555' }}>
+                                        תפקיד: {opt.data.roleLabel} | שעות שבוצעו: {opt.data.hoursWorked}h{' '}
+                                        {opt.data.isTeamMember && '| חבר/ה בצוות שלי'}
+                                    </div>
+                                </div>
+                            )}
+                            value={selectedUsers}
+                            onChange={setSelectedUsers}
                         />
-                    </div>
 
-                    <div className="mt-3">
-                        <label>שעות משוער (ברירת מחדל {customHours}):</label>
-                        <input
-                            type="number"
-                            className="form-control"
-                            value={customHours}
-                            onChange={e => setCustomHours(e.target.value)}
-                        />
-                    </div>
+                        <div className="mt-3">
+                            <label style={{ fontWeight: 500 }}>שעות ברירת מחדל (ניתן לשינוי):</label>
+                            <input
+                                type="number"
+                                className="form-control"
+                                value={hours}
+                                onChange={e => setHours(e.target.value)}
+                                min="1"
+                                placeholder="הזן/י מספר שעות"
+                            />
+                        </div>
 
-                    <button className="btn btn-success mt-3" onClick={handleAssignTask}>
-                        הוסף משימה
-                    </button>
-                </>
-            )}
+                        <button className="btn-success-center mt-4" onClick={handleAssign}>
+                            ✅ אישור הקצאה
+                        </button>
+                    </>
+                )}
+            </div>
         </div>
     );
 }
-
-export default TaskAssignmentPage;

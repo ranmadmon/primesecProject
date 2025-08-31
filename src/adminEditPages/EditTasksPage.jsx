@@ -1,82 +1,127 @@
-import React, { useState, useEffect, useContext } from 'react';
+// src/pages/EditTasksPage.jsx
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import { AppDataContext } from '../context/AppDataContext';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+import '../cssFiles/page-layout.css'; // העיצוב המשותף
+import { SERVER_URL } from '../Utils/Constants.jsx';
 
 export default function EditTasksPage() {
-    const { tasks, setTasks, abilities } = useContext(AppDataContext);
-    const [selectedTask, setSelectedTask] = useState(null);
-    const [name, setName] = useState('');
-    const [requires, setRequires] = useState([]);
-    const [avgHours, setAvgHours] = useState('');
-    const navigate = useNavigate();
+    const [tasks, setTasks]         = useState([]);
+    const [abilities, setAbilities] = useState([]);
 
-    // initialize fields on select
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [name, setName]             = useState('');
+    const [avgHours, setAvgHours]     = useState('');   // string לצורך התצוגה
+    const [requires, setRequires]     = useState([]);
+
+    const token = new Cookies().get('token');
+
+    // טוען משימות ויכולות
     useEffect(() => {
-        if (selectedTask) {
-            const taskObj = tasks.find(t => t.id === selectedTask.value);
-            setName(taskObj.name);
-            setAvgHours(taskObj.avgHours);
-            setRequires(
-                taskObj.requires.map(r => ({ value: r, label: r }))
-            );
-        } else {
+        if (!token) return;
+        Promise.all([
+            axios.get(`${SERVER_URL}/tasks`,    { params: { token } }),
+            axios.get(`${SERVER_URL}/abilities`,{ params: { token } })
+        ])
+            .then(([tRes, aRes]) => {
+                setTasks(tRes.data);
+                setAbilities(aRes.data.map(a => typeof a === 'string' ? a : a.name));
+            })
+            .catch(err => {
+                console.error('Error loading tasks or abilities', err);
+                alert('שגיאה בטעינת נתונים מהשרת');
+            });
+    }, [token]);
+
+    // אתחול השדות כשבוחרים משימה
+    useEffect(() => {
+        if (!selectedTask) {
             setName('');
             setAvgHours('');
             setRequires([]);
+            return;
         }
+        const t = tasks.find(x => x.id === selectedTask.value);
+        setName(t.name);
+        setAvgHours(t.averageTime.toString());
+        setRequires(t.requires.map(r => ({ value: r, label: r })));
     }, [selectedTask, tasks]);
 
-    const taskOptions = tasks.map(t => ({ value: t.id, label: t.name }));
-    const abilityOptions = abilities.map(a => ({ value: a, label: a }));
+    const taskOpts    = tasks.map(t => ({ value: t.id, label: t.name }));
+    const abilityOpts = abilities.map(a => ({ value: a, label: a }));
 
     const handleSave = () => {
-        if (!selectedTask) {
-            alert('בחר משימה לעדכון');
-            return;
-        }
+        if (!selectedTask) return alert('בחר משימה לפני שמירה');
         const trimmed = name.trim();
-        if (!trimmed) {
-            alert('יש להזין שם משימה');
-            return;
+        if (!trimmed) return alert('יש להזין שם משימה');
+        const hoursNum = parseFloat(avgHours);
+        if (isNaN(hoursNum) || hoursNum <= 0) {
+            return alert('יש להזין שעות ממוצעות תקינות');
         }
-        const hours = parseFloat(avgHours);
-        if (isNaN(hours) || hours <= 0) {
-            alert('יש להזין שעות ממוצעות תקינות');
-            return;
-        }
-        setTasks(
-            tasks.map(t =>
-                t.id === selectedTask.value
-                    ? { ...t, name: trimmed, avgHours: hours, requires: requires.map(r => r.value) }
-                    : t
-            )
-        );
-        alert('המשימה עודכנה בהצלחה');
-        setSelectedTask(null);
+        const body = {
+            id:           selectedTask.value,
+            name:         trimmed,
+            averageTime:  hoursNum,
+            requires:     requires.map(r => r.value)
+        };
+        axios
+            .post(`${SERVER_URL}/tasks/update`, body, { params: { token } })
+            .then(resp => {
+                if (resp.data.success) {
+                    setTasks(prev => prev.map(t =>
+                        t.id === body.id
+                            ? { ...t, name: body.name, averageTime: body.averageTime, requires: body.requires }
+                            : t
+                    ));
+                    alert('המשימה עודכנה בהצלחה');
+                    setSelectedTask(null);
+                } else {
+                    throw new Error('Failed to update');
+                }
+            })
+            .catch(err => {
+                console.error('שגיאה בעדכון המשימה', err);
+                alert('שגיאה בעדכון המשימה');
+            });
     };
 
     const handleDelete = () => {
-        if (!selectedTask) {
-            alert('בחר משימה למחיקה');
-            return;
-        }
-        const taskObj = tasks.find(t => t.id === selectedTask.value);
-        if (window.confirm(`האם למחוק את המשימה "${taskObj.name}"?`)) {
-            setTasks(tasks.filter(t => t.id !== taskObj.id));
-            alert('המשימה נמחקה');
-            setSelectedTask(null);
-        }
+        if (!selectedTask) return alert('בחר משימה למחיקה');
+        const t = tasks.find(x => x.id === selectedTask.value);
+        if (!window.confirm(`האם למחוק את המשימה "${t.name}"?`)) return;
+
+        // שימוש ב-POST במקום DELETE כדי לקרוא ל-@PostMapping("/tasks/{id}/delete")
+        axios
+            .post(
+                `${SERVER_URL}/tasks/${t.id}/delete`,
+                {},                  // גוף הבקשה ריק
+                { params: { token } } // token כ-query param
+            )
+            .then(resp => {
+                if (resp.data.success) {
+                    setTasks(prev => prev.filter(x => x.id !== t.id));
+                    alert('המשימה נמחקה');
+                    setSelectedTask(null);
+                } else {
+                    throw new Error('Failed to delete');
+                }
+            })
+            .catch(err => {
+                console.error('שגיאה במחיקת המשימה', err);
+                alert('שגיאה במחיקת המשימה');
+            });
     };
 
-    return (
-        <div style={{ padding: '2rem' }} dir="rtl">
-            <h2>עריכת משימה קיימת</h2>
 
-            <div className="mb-3">
+    return (
+        <div className="page-container" dir="rtl">
+            <h2 className="page-header">עריכת משימה קיימת</h2>
+
+            <div className="form-section">
                 <label>בחר משימה:</label>
                 <Select
-                    options={taskOptions}
+                    options={taskOpts}
                     value={selectedTask}
                     onChange={opt => setSelectedTask(opt)}
                     placeholder="בחר משימה..."
@@ -85,28 +130,29 @@ export default function EditTasksPage() {
 
             {selectedTask && (
                 <>
-                    <div className="mb-3">
+                    <div className="form-section">
                         <label>שם משימה:</label>
                         <input
                             type="text"
                             className="form-control"
                             value={name}
                             onChange={e => setName(e.target.value)}
+                            placeholder="שם משימה"
                         />
                     </div>
 
-                    <div className="mb-3">
+                    <div className="form-section">
                         <label>יכולות נדרשות:</label>
                         <Select
-                            options={abilityOptions}
                             isMulti
+                            options={abilityOpts}
                             value={requires}
                             onChange={setRequires}
                             placeholder="בחר יכולות..."
                         />
                     </div>
 
-                    <div className="mb-3">
+                    <div className="form-section">
                         <label>שעות ממוצעות:</label>
                         <input
                             type="number"
@@ -116,11 +162,11 @@ export default function EditTasksPage() {
                         />
                     </div>
 
-                    <div className="d-flex justify-content-between">
-                        <button className="btn btn-danger" onClick={handleDelete}>
+                    <div className="actions-row">
+                        <button className="btn-delete" onClick={handleDelete}>
                             מחק משימה
                         </button>
-                        <button className="btn btn-primary" onClick={handleSave}>
+                        <button className="btn-save" onClick={handleSave}>
                             שמור שינויים
                         </button>
                     </div>
